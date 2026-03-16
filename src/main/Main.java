@@ -12,7 +12,16 @@ public class Main {
       window.setResizable(false);
       window.setTitle("just a regular game");
 
+      GamePanel gamePanel = new GamePanel();
+      window.add(gamePanel);
+
+      window.pack();
+
+      //la fenêtre va être affiché au milieu de l'écran
       window.setLocationRelativeTo(null);
+      window.setVisible(true);
+
+      gamePanel.startGameThread();
     }
 
 }
