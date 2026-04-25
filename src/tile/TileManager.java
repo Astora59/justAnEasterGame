@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 public class TileManager {
 
     GamePanel gp;
-    Tile[] tile;
-    int mapTileNum[] [];
+    public Tile[] tile;
+    public int mapTileNum[] [];
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -22,7 +22,8 @@ public class TileManager {
         mapTileNum = new int [gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("assets/maps/world01.txt");
+        loadMap("assets/maps/world02.txt");
+
     }
 
     public void getTileImage() {
@@ -33,13 +34,22 @@ public class TileManager {
             tile[0].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/grass.png"));
 
             tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/sand.png"));
+            tile[1].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/wall.png"));
+            tile[1].collision = true;
 
             tile[2] = new Tile();
             tile[2].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/water.png"));
+            tile[2].collision = true;
 
             tile[3] = new Tile();
-            tile[3].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/wall.png"));
+            tile[3].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/earth.png"));
+
+            tile[4] = new Tile();
+            tile[4].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/tree.png"));
+            tile[4].collision = true;
+
+            tile[5] = new Tile();
+            tile[5].image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("assets/background/sand.png"));
 
 
         } catch (IOException e) {
@@ -79,6 +89,12 @@ public class TileManager {
         } catch(Exception e) {
             System.out.println("erreur" + e);
         }
+        System.out.println("Fichier chargé : " + filePath);
+        System.out.println("Chargement fichier : " + filePath);
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
+
+        System.out.println(is);
     }
 
 
@@ -100,7 +116,7 @@ public class TileManager {
             worldCol++;
 
 
-            if(worldCol == gp.maxScreenCol) {
+            if(worldCol == gp.maxWorldCol) {
                 worldCol = 0;
 
                 worldRow++;

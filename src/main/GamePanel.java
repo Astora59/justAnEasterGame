@@ -1,7 +1,8 @@
 package main;
 
 import entity.Player;
-import tile.Tile;
+import monster.Monster;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -23,17 +24,22 @@ public class GamePanel extends JPanel implements Runnable {
 
     //WORLD SETTINGS
     public final int maxWorldCol = 50;
-    public final int maxWorldRow = 50;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
+    public final int maxWorldRow = 74;
+
+    public int overlayAlpha = 0; // commence totalement transparent
+    //public Monster monster;
+    public Monster monster[] = new Monster[3];
 
     int FPS = 60;
 
     TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
+    Sound sound = new Sound();
     Thread gameThread;
+    public CollisionChecker cChecker = new CollisionChecker(this);
+    public AssetSetter aSetter = new AssetSetter(this);
     public Player player = new Player(this, keyH);
-
+    public SuperObject obj[] = new SuperObject[10];
 
 
     public GamePanel() {
@@ -42,6 +48,35 @@ public class GamePanel extends JPanel implements Runnable {
       this.setDoubleBuffered(true);
       this.addKeyListener(keyH);
       this.setFocusable(true);
+    }
+
+    boolean musicChanged = false;
+    public void musicChange() {
+
+        if(player.eggCounter > 4 && !musicChanged) {
+            stopMusic(0);
+            playMusic(1);
+            musicChanged = true;
+        }
+
+        if(player.eggCounter == 8 && musicChanged) {
+            stopMusic(1);
+            System.exit(0);
+
+        }
+
+        overlayAlpha = Math.min(255, player.eggCounter * 30);
+    }
+
+
+
+
+    public void setupGame() {
+        aSetter.setObject();
+        aSetter.setMonster();
+        playMusic(0);
+
+
     }
 
     public void startGameThread() {
@@ -86,6 +121,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void update() {
         player.update();
+        musicChange();
+
+        if (player.eggCounter >= 5) {
+            for (int i = 0; i < monster.length; i++) {
+                if (monster[i] != null) {
+                    monster[i].update();
+
+                    if (cChecker.checkMonster(player, i)) {
+                        System.exit(0);
+                    }
+                }
+            }
+        }
+
+
     }
 
     public void paintComponent(Graphics g) {
@@ -95,8 +145,44 @@ public class GamePanel extends JPanel implements Runnable {
 
         tileM.draw(g2);
         player.draw(g2);
+        for(int i = 0; i < obj.length; i++) {
+            if (obj[i] != null) {
+                obj[i].draw(g2, this);
+            }
+        }
+
+        if(overlayAlpha > 0) {
+            g2.setColor(new Color(0, 0, 0, overlayAlpha));
+            g2.fillRect(0, 0, screenWidth, screenHeight);
+        }
+
+        if (player.eggCounter >= 5) {
+            for (int i = 0; i < monster.length; i++) {
+                if (monster[i] != null) {
+                    monster[i].draw(g2);
+                }
+            }
+        }
+
         g2.dispose();
 
 
+
+    }
+    Sound music = new Sound();
+    Sound se = new Sound();
+    public void playMusic(int i) {
+        music.stop();
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+    public void stopMusic(int i) {
+        sound.stop();
+    }
+
+    public void playSE(int i) {
+        se.setFile(i);
+        se.play();
     }
 }
