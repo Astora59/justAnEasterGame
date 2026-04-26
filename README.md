@@ -1,7 +1,6 @@
 # justAnEasterGame
 
 ##HOW TO PLAY
-
-Go into the out/artifacts/JustanEasterGame_jar and click on the .jar file
+Once you have compiled this project, go into the out/artifacts/JustanEasterGame_jar and click on the .jar file
 
 ENJOY !
